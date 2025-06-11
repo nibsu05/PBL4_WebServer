@@ -1,0 +1,115 @@
+@model PBL3.DTO.Seller.Seller_RutNapTienDTO
+
+@{
+    ViewBag.Title = "Nạp tiền";
+    Layout = "~/Views/Shared/SellerLayout.cshtml";
+}
+
+@section Styles {
+    <style>
+        .wallet-info {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            margin: 0 5px;
+        }
+
+        .btn i {
+            margin-right: 5px;
+        }
+
+        .input-group-append .btn {
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+
+        .nap-tien-card {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            background-color: #ffffff;
+        }
+    </style>
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-3">
+            <partial name="_SellerMenuInsideLayout" />
+        </div>
+        <div class="col-md-9">
+            <div class="nap-tien-card">
+                <h3 class="text-center text-success mb-4">Nạp tiền vào ví</h3>
+
+                @if (TempData["Error"] != null)
+                {
+                    <div class="alert alert-danger text-center">
+                        @Html.Raw(TempData["Error"])
+                    </div>
+                }
+
+
+                @using (Html.BeginForm("NapTien", "Seller", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger text-center mb-3" })
+
+                    <div class="form-group">
+                        <label asp-for="AmountMoney">Số tiền nạp</label>
+                        <div class="input-group">
+                            <input asp-for="AmountMoney" class="form-control" placeholder="Nhập số tiền" />
+                            <div class="input-group-append">
+                                <span class="input-group-text">VNĐ</span>
+                            </div>
+                        </div>
+                        @Html.ValidationMessageFor(m => m.AmountMoney, "", new { @class = "text-danger" })
+                        <small class="form-text text-muted">Số tiền tối thiểu: 50.000 VNĐ</small>
+                    </div>
+                    <div class="wallet-info mb-4" style="background-color:#f8f9fa; padding:15px; border-radius:8px;">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>Số dư hiện tại:</strong> @Model.WalletBalance.ToString("N0") VNĐ</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Ngân hàng:</strong> @Html.TextBoxFor(m => m.BankName, new { @class = "form-control", @readonly = "readonly" })</p>
+                                <p><strong>Số tài khoản:</strong> @Html.TextBoxFor(m => m.BankNumber, new { @class = "form-control", @readonly = "readonly" })</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Pin">Mã PIN</label>
+                        <input asp-for="Pin" class="form-control" placeholder="Nhập mã PIN của bạn" type="password" maxlength="6" />
+                        @Html.ValidationMessageFor(m => m.Pin, "", new { @class = "text-danger" })
+                        <small class="form-text text-muted">Nhập mã PIN gồm 4-6 chữ số để xác nhận giao dịch.</small>
+                    </div>
+
+                    <div class="form-group text-center">
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-plus-circle"></i> Nạp tiền
+                        </button>
+                        <a href="@Url.Action("Wallet", "Seller")" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Quay lại
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+}

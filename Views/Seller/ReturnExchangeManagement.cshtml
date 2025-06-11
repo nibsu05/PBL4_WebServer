@@ -1,0 +1,178 @@
+@model List<PBL3.DTO.Seller.Seller_ReturnExchangeDTO>
+@using PBL3.Enums
+@using PBL3.Helpers
+@{
+    ViewBag.Title = "Quản lý đổi trả";
+    Layout = "~/Views/Shared/SellerLayout.cshtml";
+    var statuses = Enum.GetValues(typeof(ExchangeStatus)).Cast<ExchangeStatus>().ToList();
+}
+
+@section Styles {
+    <style>
+        .search-form, .card-return {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+
+        .badge-status {
+            font-weight: 500;
+            padding: 5px 12px;
+            border-radius: 12px;
+        }
+
+        .status-wait { background-color: #f39c12; color: #fff; }
+        .status-rejected { background-color: #e74c3c; color: #fff; }
+        .status-approved { background-color: #27ae60; color: #fff; }
+
+        .return-actions button {
+            min-width: 100px;
+        }
+
+        .return-image {
+            max-height: 140px;
+            object-fit: contain;
+        }
+    </style>
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-3">
+            @Html.Partial("_SellerMenuOutsideLayout")
+        </div>
+
+        <div class="col-md-9">
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger">@TempData["Error"]</div>
+            }
+
+            <!-- Form tìm kiếm -->
+            <div class="search-form">
+                <form method="get" action="@Url.Action("ReturnExchangeManagement")" class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label">Từ ngày</label>
+                        <input type="date" class="form-control" name="fromDate" value="@ViewBag.FromDate" />
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Đến ngày</label>
+                        <input type="date" class="form-control" name="toDate" value="@ViewBag.ToDate" />
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Trạng thái</label>
+                        <select class="form-select" name="status">
+                            <option value="">Tất cả</option>
+                            @foreach (var status in statuses)
+                            {
+                                <option value="@status" selected="@(ViewBag.SelectedStatus?.ToString() == status.ToString())">
+                                    @EnumHelper.GetDisplayName(status)
+                                </option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-12 d-flex justify-content-end">
+                        <button type="submit" class="btn btn-primary me-2">
+                            <i class="fas fa-search"></i> Tìm kiếm
+                        </button>
+                        <a href="@Url.Action("ReturnExchangeManagement")" class="btn btn-secondary">
+                            <i class="fas fa-redo"></i> Reset
+                        </a>
+                    </div>
+                </form>
+            </div>
+
+            <div>
+                <h4 class="mb-3">Danh sách yêu cầu đổi trả</h4>
+
+                @if (Model != null && Model.Any())
+                {
+                    foreach (var item in Model)
+                    {
+                        var statusClass = item.Status switch
+                        {
+                            ExchangeStatus.WaitConfirm => "status-wait",
+                            ExchangeStatus.Rejected => "status-rejected",
+                            ExchangeStatus.Approved => "status-approved",
+                            _ => "badge-secondary"
+                        };
+
+                        var imageBase64 = item.Image != null && item.Image.Length > 0
+                            ? $"data:image/png;base64,{Convert.ToBase64String(item.Image)}"
+                            : null;
+
+                        <div class="card-return">
+                            <div class="row align-items-center">
+                                <div class="col-md-3 text-center">
+                                    @if (imageBase64 != null)
+                                    {
+                                        <img src="@imageBase64" alt="Ảnh đổi trả" class="img-fluid rounded return-image" />
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted fst-italic">Không có ảnh</span>
+                                    }
+                                </div>
+                                <div class="col-md-6">
+                                    <h5 class="mb-2">@item.ProductName</h5>
+                                    <p class="mb-1"><strong>Số lượng:</strong> @item.Quantity</p>
+                                    <p class="mb-1"><strong>Lý do:</strong> @item.Reason</p>
+                                    <p class="mb-1"><strong>Ngày yêu cầu:</strong> @item.RequestDate.ToString("dd/MM/yyyy")</p>
+                                    <span class="badge badge-status @statusClass">@EnumHelper.GetDisplayName(item.Status)</span>
+                                </div>
+                                <div class="col-md-3 text-end return-actions">
+                                    @if (item.Status == ExchangeStatus.WaitConfirm)
+                                    {
+                                        <!-- Nút duyệt -->
+                                        <button class="btn btn-outline-success me-2 mb-2"
+                                                onclick="handleAction(@item.ReturnExchangeId, true)">
+                                            <i class="fas fa-check-circle"></i> Duyệt
+                                        </button>
+
+                                        <!-- Nút từ chối -->
+                                        <button class="btn btn-outline-danger mb-2"
+                                                onclick="handleAction(@item.ReturnExchangeId, false)">
+                                            <i class="fas fa-times-circle"></i> Từ chối
+                                        </button>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="text-muted fst-italic">Không có yêu cầu đổi trả nào.</div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+<script>
+    function handleAction(id, approve) {
+        const actionUrl = approve ? '/Seller/Approve' : '/Seller/Reject';
+
+        if (!confirm(approve ? 'Duyệt yêu cầu này?' : 'Từ chối yêu cầu này?')) return;
+
+        fetch(actionUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: new URLSearchParams({ id: id })
+        })
+        .then(res => res.json())
+        .then(data => {
+            alert(data.message);
+            if (data.success) location.reload();
+        })
+        .catch(err => {
+            console.error(err);
+            alert('Có lỗi xảy ra khi xử lý yêu cầu');
+        });
+    }
+</script>
+}

@@ -1,0 +1,84 @@
+@{
+    ViewData["Title"] = "Thanh toán thành công";
+    Layout = "~/Views/Shared/BuyerLayout.cshtml";
+}
+
+<style>
+    .success-container {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #f9fafb;
+    }
+
+    .success-box {
+        background-color: #fff;
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+        max-width: 500px;
+        width: 100%;
+        text-align: center;
+        border: 1px solid #e5e7eb;
+    }
+
+    .success-icon {
+        background-color: #d1fae5;
+        display: inline-block;
+        padding: 12px;
+        border-radius: 50%;
+        margin-bottom: 20px;
+    }
+
+    .success-icon svg {
+        width: 48px;
+        height: 48px;
+        stroke: #10b981;
+    }
+
+    .success-title {
+        font-size: 24px;
+        font-weight: bold;
+        color: #10b981;
+        margin-bottom: 16px;
+    }
+
+    .success-message {
+        font-size: 16px;
+        color: #374151;
+        margin-bottom: 24px;
+    }
+
+    .btn-success {
+        background-color: #1e3a8a;
+        color: white;
+        text-decoration: none;
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-weight: 500;
+        display: inline-block;
+        transition: background-color 0.2s;
+    }
+
+    .btn-success:hover {
+        background-color: #1e40af;
+    }
+</style>
+
+<div class="success-container">
+    <div class="success-box">
+        <div class="success-icon">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="white" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 13l3 3 7-7" />
+            </svg>
+        </div>
+        <div class="success-title">Thanh toán thành công</div>
+        <p class="text-gray-600 mb-8">
+            Đơn hàng sẽ được giao đến bạn trong thời gian sớm nhất.<br />
+            Cảm ơn bạn đã tin tưởng và sử dụng dịch vụ của chúng tôi.
+        </p>
+        <a href="@Url.Action("Index", "Product")" class="btn-success">Tiếp tục mua sắm</a>
+    </div>
+</div>

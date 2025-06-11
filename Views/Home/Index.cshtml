@@ -1,0 +1,156 @@
+﻿@model List<PBL3.DTO.Buyer.Buyer_SanPhamDTO>
+@using PBL3.Enums
+@{
+    Layout = "~/Views/Shared/Layout.cshtml";
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <title>CDT Store</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto', sans-serif;
+            background-size: cover;
+            color: white;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            background-color: rgba(0, 0, 0, 0.6);
+        }
+
+        .brand {
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .nav-links a {
+            margin-left: 20px;
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .nav-links a:hover {
+            text-decoration: underline;
+        }
+
+        .container-fluid{
+            padding:  0;
+        }
+        .banner-fullscreen {
+            position: relative;
+            width: 100%;
+            height: 100vh; /* Chiếm toàn bộ chiều cao màn hình */
+            z-index: 1;
+            margin-bottom: 40px;
+        }
+
+        .banner-fullscreen img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            filter: brightness(65%); /* làm tối ảnh để chữ nổi bật hơn */
+        }
+
+        .banner-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+            text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.9); /* đổ bóng mạnh cho chữ */
+        }
+
+        .banner-text h1 {
+            font-size: 56px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .banner-text p {
+            font-size: 24px;
+        }
+        .product-card { border: none; border-radius: 12px; box-shadow: 0 2px 8px #0001; }
+        .product-card .card-title { color: #0d3f2e; font-weight: 500; }
+        .product-card .card-text { color: #27ae60; font-weight: bold; }
+        .product-card .btn { background: #27ae60; border: none; }
+        .product-card .btn:hover { background: #219150; }
+        .star { color: #ffc107; }
+    </style>
+</head>
+<body>
+    <div class="banner-fullscreen">
+        <img src="@Url.Content("~/images/home.jpg")" alt="Banner CDT" />
+        <div class="banner-text">
+            <h1>Chào mừng đến với CDT Store</h1>
+            <p>Nền tảng thương mại điện tử giúp bạn khám phá, mua sắm và trải nghiệm những sản phẩm chất lượng nhất với giá cả cạnh tranh.</p>
+        </div>
+    </div>
+    @if (Model != null && Model.Any(p => p.Status == ProductStatus.Selling))
+        {
+            <div class="row row-cols-1 row-cols-md-3 row-cols-lg-5 g-4">
+                @foreach (var product in Model.Where(p => p.Status == ProductStatus.Selling))
+                {
+                    <div class="col">
+                        <div class="card product-card h-100">
+                            @if (product.Image != null)
+                            {
+                                <img src="data:image/jpeg;base64,@Convert.ToBase64String(product.Image)" class="card-img-top" alt="@product.ProductName" style="height: 180px; object-fit: cover;">
+                            }
+                            else
+                            {
+                                <img src="~/images/no-image.jpg" class="card-img-top" alt="No image" style="height: 180px; object-fit: cover;">
+                            }
+                            <div class="card-body">
+                                <h6 class="card-title text-truncate">@product.ProductName</h6>
+                                <p class="card-text">@product.Price.ToString("N0") đ</p>
+                                <div class="d-flex align-items-center mb-2">
+                                    <div>
+                                        @for (int i = 1; i <= 5; i++)
+                                        {
+                                            if (i <= product.Rating)
+                                            {
+                                                <i class="fas fa-star star"></i>
+                                            }
+                                            else if (i - 0.5 <= product.Rating)
+                                            {
+                                                <i class="fas fa-star-half-alt star"></i>
+                                            }
+                                            else
+                                            {
+                                                <i class="far fa-star star"></i>
+                                            }
+                                        }
+                                    </div>
+                                    <small class="text-muted ms-2">(@product.Rating.ToString("F1"))</small>
+                                </div>
+                                <a href="@Url.Action("Details", "Product", new { id = product.ProductId })" class="btn btn-success w-100">Xem chi tiết</a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="text-center mt-4">
+                <h4>Không tìm thấy sản phẩm nào</h4>
+                <p>Vui lòng thử lại với từ khóa khác hoặc chọn danh mục khác</p>
+            </div>
+        }
+</body>
+</html>
