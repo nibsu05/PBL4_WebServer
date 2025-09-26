@@ -12,7 +12,10 @@ builder.Services.AddSession();
 builder.Services.AddControllersWithViews().AddSessionStateTempDataProvider();
 // Đăng ký DbContext
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseMySql(
+        builder.Configuration.GetConnectionString("DefaultConnection"),
+        ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("DefaultConnection"))
+    ));
 
 // Đăng ký các Repository
 builder.Services.AddScoped<IUserRepositories, UserRepositories>();

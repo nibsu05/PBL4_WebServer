@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -6,38 +7,47 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace PBL_3.Migrations
 {
     /// <inheritdoc />
-    public partial class UpdateFromDB : Migration
+    public partial class InitialMySql : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.AlterDatabase()
+                .Annotation("MySql:CharSet", "utf8mb4");
+
             migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Username = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Username = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Password = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Name = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     Sex = table.Column<int>(type: "int", nullable: false),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    PhoneNumber = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Date = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     RoleName = table.Column<int>(type: "int", nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                    IsActive = table.Column<bool>(type: "tinyint(1)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.Id);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "Buyers",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false),
-                    Avatar = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
-                    Location = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Avatar = table.Column<byte[]>(type: "longblob", nullable: true),
+                    Location = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
@@ -48,15 +58,16 @@ namespace PBL_3.Migrations
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "PlatformWallets",
                 columns: table => new
                 {
                     WalletId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    WalletBalance = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    WalletBalance = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
                     UserId = table.Column<int>(type: "int", nullable: false),
                     Pin = table.Column<int>(type: "int", nullable: false)
                 },
@@ -69,18 +80,22 @@ namespace PBL_3.Migrations
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "Sellers",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false),
-                    Avatar = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
-                    StoreName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    JoinedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    EmailGeneral = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    AddressSeller = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Avatar = table.Column<byte[]>(type: "longblob", nullable: true),
+                    StoreName = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    JoinedDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    EmailGeneral = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    AddressSeller = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
@@ -91,16 +106,18 @@ namespace PBL_3.Migrations
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "AddressBuyers",
                 columns: table => new
                 {
                     AddressId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Location = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    IsDefault = table.Column<bool>(type: "bit", nullable: false),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Location = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    IsDefault = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     BuyerId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -112,16 +129,19 @@ namespace PBL_3.Migrations
                         principalTable: "Buyers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "Banks",
                 columns: table => new
                 {
                     BankAccountId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    BankNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    BankName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    BankNumber = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    BankName = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     WalletId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -133,25 +153,27 @@ namespace PBL_3.Migrations
                         principalTable: "PlatformWallets",
                         principalColumn: "WalletId",
                         onDelete: ReferentialAction.Cascade);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "Orders",
                 columns: table => new
                 {
                     OrderId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     BuyerId = table.Column<int>(type: "int", nullable: false),
                     SellerId = table.Column<int>(type: "int", nullable: false),
-                    OrderDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    OrderPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    OrderDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    OrderPrice = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
                     OrderStatus = table.Column<int>(type: "int", nullable: false),
                     PaymentMethod = table.Column<int>(type: "int", nullable: false),
-                    PaymentStatus = table.Column<bool>(type: "bit", nullable: false),
-                    Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Discount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    PaymentStatus = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    Address = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Discount = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
                     QuantityTypeOfProduct = table.Column<int>(type: "int", nullable: false),
-                    OrderReceivedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    OrderReceivedDate = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -167,20 +189,23 @@ namespace PBL_3.Migrations
                         column: x => x.SellerId,
                         principalTable: "Sellers",
                         principalColumn: "Id");
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "Products",
                 columns: table => new
                 {
                     ProductId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ProductName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    ProductName = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     ProductQuantity = table.Column<int>(type: "int", nullable: false),
-                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    ProductImage = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
+                    Price = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    ProductImage = table.Column<byte[]>(type: "longblob", nullable: true),
                     ProductType = table.Column<int>(type: "int", nullable: false),
-                    ProductDescription = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ProductDescription = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     SellerId = table.Column<int>(type: "int", nullable: false),
                     ProductStatus = table.Column<int>(type: "int", nullable: false),
                     SoldProduct = table.Column<int>(type: "int", nullable: false)
@@ -194,20 +219,23 @@ namespace PBL_3.Migrations
                         principalTable: "Sellers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "Vouchers",
                 columns: table => new
                 {
-                    VoucherId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    PercentDiscount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    MaxDiscount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    VoucherId = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    PercentDiscount = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    MaxDiscount = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    Description = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     VoucherQuantity = table.Column<int>(type: "int", nullable: false),
-                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    StartDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    EndDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    IsActive = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     SellerId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -219,7 +247,8 @@ namespace PBL_3.Migrations
                         principalTable: "Sellers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "CartItems",
@@ -228,8 +257,9 @@ namespace PBL_3.Migrations
                     BuyerId = table.Column<int>(type: "int", nullable: false),
                     ProductId = table.Column<int>(type: "int", nullable: false),
                     Quantity = table.Column<int>(type: "int", nullable: false),
-                    ProductName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ProductImage = table.Column<byte[]>(type: "varbinary(max)", nullable: true)
+                    ProductName = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    ProductImage = table.Column<byte[]>(type: "longblob", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -246,7 +276,8 @@ namespace PBL_3.Migrations
                         principalTable: "Products",
                         principalColumn: "ProductId",
                         onDelete: ReferentialAction.Restrict);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "OrderDetails",
@@ -254,11 +285,12 @@ namespace PBL_3.Migrations
                 {
                     OrderId = table.Column<int>(type: "int", nullable: false),
                     ProductId = table.Column<int>(type: "int", nullable: false),
-                    Productname = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Productname = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     Quantity = table.Column<int>(type: "int", nullable: false),
-                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    TotalNetProfit = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Image = table.Column<byte[]>(type: "varbinary(max)", nullable: true)
+                    Price = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    TotalNetProfit = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    Image = table.Column<byte[]>(type: "longblob", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -275,20 +307,22 @@ namespace PBL_3.Migrations
                         principalTable: "Products",
                         principalColumn: "ProductId",
                         onDelete: ReferentialAction.Restrict);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "ReturnExchanges",
                 columns: table => new
                 {
                     ReturnExchangeId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     ProductId = table.Column<int>(type: "int", nullable: false),
                     OrderId = table.Column<int>(type: "int", nullable: false),
-                    Reason = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Image = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
-                    RequestDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ResponseDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Reason = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Image = table.Column<byte[]>(type: "longblob", nullable: true),
+                    RequestDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    ResponseDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
                     Quantity = table.Column<int>(type: "int", nullable: false)
                 },
@@ -307,20 +341,22 @@ namespace PBL_3.Migrations
                         principalTable: "Products",
                         principalColumn: "ProductId",
                         onDelete: ReferentialAction.Restrict);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "Reviews",
                 columns: table => new
                 {
                     ReviewId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     ProductId = table.Column<int>(type: "int", nullable: false),
                     BuyerId = table.Column<int>(type: "int", nullable: false),
                     Rating = table.Column<int>(type: "int", nullable: false),
-                    Comment = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    DateReview = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                    Comment = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    DateReview = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    IsActive = table.Column<bool>(type: "tinyint(1)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -337,15 +373,17 @@ namespace PBL_3.Migrations
                         principalTable: "Products",
                         principalColumn: "ProductId",
                         onDelete: ReferentialAction.Cascade);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "Voucher_Buyers",
                 columns: table => new
                 {
-                    VoucherId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    VoucherId = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     BuyerId = table.Column<int>(type: "int", nullable: false),
-                    IsUsed = table.Column<bool>(type: "bit", nullable: false)
+                    IsUsed = table.Column<bool>(type: "tinyint(1)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -362,7 +400,8 @@ namespace PBL_3.Migrations
                         principalTable: "Vouchers",
                         principalColumn: "VoucherId",
                         onDelete: ReferentialAction.Restrict);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AddressBuyers_BuyerId",
